@@ -14,15 +14,15 @@ const registerUser = async (req, res) => {
       name,
       email,
       password,
-      role: "organizer"  // Assign "organizer" role during registration
+      role: "organizer"
     });
-    
+
     if (user) {
       res.status(201).json({
         _id: user._id,
         name: user.name,
         email: user.email,
-        token: generateToken(user._id), // Generate token
+        token: generateToken(user._id),
       });
     } else {
       res.status(400).json({ message: "Invalid user data" });
@@ -39,12 +39,17 @@ const loginUser = async (req, res) => {
 
   try {
     const user = await User.findOne({ email });
+    console.log(user, "login user")
+
     if (user && (await user.matchPassword(password))) {
-      res.json({
+
+      const token = generateToken(user._id)
+
+      res.cookie("token", token).json({
         _id: user._id,
         name: user.name,
         email: user.email,
-        token: generateToken(user._id), // Generate token
+        token: token, // Generate token
       });
     } else {
       res.status(401).json({ message: "Invalid email or password" });
@@ -70,8 +75,7 @@ const getUserProfile = async (req, res) => {
   }
 };
 
-module.exports = {
-  registerUser,
+module.exports = {  registerUser,
   loginUser,
   getUserProfile,
 };

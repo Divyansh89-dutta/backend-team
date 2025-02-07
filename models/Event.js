@@ -1,16 +1,15 @@
 const mongoose = require("mongoose");
-
 const EventSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
     description: { type: String },
-    date: { type: Date, required: true }, // Ensure this is a proper date type
-    time: { type: String, required: true }, // Consider using Date if needed
+    date: { type: Date, required: true },
+    time: { type: String, required: true },
     venue: { type: String, required: true },
-    image: { type: String }, // URL for event image
+    image: { type: String },
     ticketTypes: [
       {
-        type: { type: String, required: true }, // e.g., General, VIP
+        type: { type: String, required: true },
         price: { type: Number, required: true },
         quantity: { type: Number, required: true },
       },
@@ -19,5 +18,4 @@ const EventSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-
 module.exports = mongoose.model("Event", EventSchema);

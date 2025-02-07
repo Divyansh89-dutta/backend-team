@@ -1,14 +1,21 @@
 const Event = require("../models/Event");
+const { uploadToCloudinary } = require("../utils/upload");
 
-// Create an event
-exports.createEvent = async (req, res) => {
+const createEvent = async (req, res) => {
   try {
     if (req.user.role !== "organizer") {
       return res.status(403).json({ message: "Access Denied" });
     }
 
+    let imageUrl = "";
+    if (req.file) {
+      const uploadResponse = await uploadToCloudinary(req.file.path);
+      imageUrl = uploadResponse.secure_url;
+    }
+
     const newEvent = new Event({
       ...req.body,
+      image: imageUrl,
       organizer: req.user._id,
     });
 
@@ -19,8 +26,7 @@ exports.createEvent = async (req, res) => {
   }
 };
 
-// Get all events
-exports.getEvents = async (req, res) => {
+const getEvents = async (req, res) => {
   try {
     const events = await Event.find();
     res.json(events);
@@ -29,45 +35,47 @@ exports.getEvents = async (req, res) => {
   }
 };
 
-// Get a single event by ID
-exports.getEventById = async (req, res) => {
+const getEventById = async (req, res) => {
   try {
     const event = await Event.findById(req.params.id);
-    if (!event) {
-      return res.status(404).json({ message: "Event not found" });
-    }
+    if (!event) return res.status(404).json({ message: "Event not found" });
     res.json(event);
   } catch (error) {
     res.status(500).json({ message: "Error fetching event", error });
   }
 };
 
-// Update an event (Only Organizer)
-exports.updateEvent = async (req, res) => {
+const updateEvent = async (req, res) => {
   try {
     const event = await Event.findById(req.params.id);
-    if (!event) {
-      return res.status(404).json({ message: "Event not found" });
-    }
+    if (!event) return res.status(404).json({ message: "Event not found" });
 
     if (event.organizer.toString() !== req.user.id) {
       return res.status(403).json({ message: "Unauthorized" });
     }
 
-    const updatedEvent = await Event.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    let imageUrl = event.image; 
+    if (req.file) {
+      const uploadResponse = await uploadToCloudinary(req.file.path);
+      imageUrl = uploadResponse.secure_url;
+    }
+
+    const updatedEvent = await Event.findByIdAndUpdate(
+      req.params.id,
+      { ...req.body, image: imageUrl },
+      { new: true }
+    );
+
     res.json(updatedEvent);
   } catch (error) {
     res.status(500).json({ message: "Error updating event", error });
   }
 };
 
-// Delete an event (Only Organizer)
-exports.deleteEvent = async (req, res) => {
+const deleteEvent = async (req, res) => {
   try {
     const event = await Event.findById(req.params.id);
-    if (!event) {
-      return res.status(404).json({ message: "Event not found" });
-    }
+    if (!event) return res.status(404).json({ message: "Event not found" });
 
     if (event.organizer.toString() !== req.user.id) {
       return res.status(403).json({ message: "Unauthorized" });
@@ -78,4 +86,13 @@ exports.deleteEvent = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: "Error deleting event", error });
   }
+};
+
+
+module.exports = {
+  createEvent,
+  getEvents,
+  getEventById,
+  updateEvent,
+  deleteEvent,
 };
