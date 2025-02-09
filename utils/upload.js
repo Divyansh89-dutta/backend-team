@@ -5,7 +5,7 @@ const cloudinary = require("../config/cloudinary");
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: "events",
+    folder: "backend",
     allowed_formats: ["jpg", "png", "jpeg"],
   },
 });
@@ -13,5 +13,5 @@ const storage = new CloudinaryStorage({
 exports.upload = multer({ storage });
 
 exports.uploadToCloudinary = async (filePath) => {
-  return await cloudinary.uploader.upload(filePath, { folder: "events" });
+  return await cloudinary.uploader.upload(filePath, { folder: "backend" });
 };
