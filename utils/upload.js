@@ -5,13 +5,22 @@ const cloudinary = require("../config/cloudinary");
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: "backend",
+    folder: "events",
     allowed_formats: ["jpg", "png", "jpeg"],
   },
 });
 
-exports.upload = multer({ storage });
+const upload = multer({ storage });
 
-exports.uploadToCloudinary = async (filePath) => {
-  return await cloudinary.uploader.upload(filePath, { folder: "backend" });
+const uploadToCloudinary = async (filePath) => {
+  try {
+    const result = await cloudinary.uploader.upload(filePath, {
+      folder: "events",
+    });
+    return result;
+  } catch (error) {
+    throw new Error("Cloudinary upload failed: " + error.message);
+  }
 };
+
+module.exports = { upload, uploadToCloudinary };

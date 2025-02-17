@@ -5,7 +5,7 @@ const { protect, isAdmin } = require("../middleware/authMiddleware");
 const { createEvent, getEvents, getEventById, updateEvent, deleteEvent } = require("../controllers/eventController");
 
 
-router.post("/", upload.single("image"), createEvent);
+router.post("/", protect, isAdmin , upload.single("image"), createEvent);
 router.get("/", getEvents);
 router.get("/:id",protect,isAdmin, getEventById);
 router.put("/:id",protect,isAdmin, upload.single("image"), updateEvent);

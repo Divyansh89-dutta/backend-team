@@ -9,12 +9,12 @@ const EventSchema = new mongoose.Schema(
     image: { type: String },
     ticketTypes: [
       {
-        type: { type: String, required: true },
-        price: { type: Number, required: true },
-        quantity: { type: Number, required: true },
+        type: { type: String, required: false },
+        price: { type: Number, required: false },
+        quantity: { type: Number, required: false },
       },
     ],
-    organizer: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    organizer: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: false },
   },
   { timestamps: true }
 );
