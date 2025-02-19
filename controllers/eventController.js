@@ -3,27 +3,27 @@ const { uploadToCloudinary } = require("../utils/upload");
 
 const createEvent = async (req, res) => {
   try {
-    console.log(req.user)
-    if (req.user.role !== "organizer") {
+    // console.log(req.user)
+    if (req.user.organizer !== "organizer") {
       return res.status(403).json({ message: "Access Denied" });
     }
 
-    let imageUrl = "";
-    if (req.file) {
-      const uploadResponse = await uploadToCloudinary(req.file.path);
-      imageUrl = uploadResponse.secure_url;
-    }
+    // let imageUrl = "";
+    // if (req.file) {
+    //   const uploadResponse = await uploadToCloudinary(req.file.path);
+    //   imageUrl = uploadResponse.secure_url;
+    // }
 
-    console.log(imageUrl, "Uploading image")
+    // console.log("Uploading image", imageUrl)
 
-    // const newEvent = new Event({
-    //   ...req.body,
-    //   image: imageUrl,
-    //   organizer: req.user._id,
-    // });
+    const newEvent = new Event({
+      ...req.body,
+      // image: imageUrl,
+      organizer: req.user._id,
+    });
 
-    // const savedEvent = await newEvent.save();
-    // res.status(201).json(savedEvent);
+    const savedEvent = await newEvent.save();
+    res.status(201).json(savedEvent);
   } catch (error) {
     console.error("Event Creation Error:", error); // Log full error
     res.status(500).json({ message: "Error creating event", error: error.message });
