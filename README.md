@@ -1,149 +1,96 @@
-1. Register User
-Endpoint: POST /api/auth/register
+```
+# Project API Documentation & Postman Testing Guide
 
-URL: http://localhost:5000/api/auth/register
-Method: POST
-Headers:
-Content-Type: application/json
-Body: (JSON)
-json
-Copy
-Edit
-{
-  "name": "John Doe",
-  "email": "john@example.com",
-  "password": "password123"
-}
+This documentation covers the authentication endpoints (register, login, profile), event management (create, update, delete events), ticket management (create, update, delete tickets), and the purchase process (including sending email notifications using Nodemailer). Follow the instructions below to test every endpoint in Postman.
+
+## Table of Contents
+1. User & Organizer Authentication
+  - Register User / Organizer
+  - Login User / Organizer
+  - Get User Profile
+2. Event Management
+  - Create Event
+  - Update Event
+  - Delete Event
+3. Ticket Management
+  - Create Ticket for an Event
+  - Update Ticket
+  - Delete Ticket
+  - Get a Single Ticket
+4. Ticket Purchase & Notification (Nodemailer)
+5. PayPal Payment Integration (Optional)
+6. Postman Testing Steps Summary
+
+## Environment Variables (.env)
+If you are sending email notifications, ensure your .env file includes:
+- `EMAIL_USER=your-email@gmail.com`
+- `EMAIL_PASS=your-app-password`
+- `PAYPAL_CLIENT_ID=your_paypal_client_id`
+- `PAYPAL_CLIENT_SECRET=your_paypal_client_secret`
+
+Make sure to include the proper values and add `.env` to your `.gitignore` file.
+```
+
+## User & Organizer Authentication
+Register User / Organizer
+Endpoint:
+POST /api/auth/register
+URL:-
+`http://localhost:5000/api/auth/register`
+Method:
+POST
+Headers:-
+Body (JSON):-
+-> `{ "name": "John Doe","email": "john@example.com","password": "password123"} `
 Expected Response:
 Status: 201 Created
-Response Body:
-json
-Copy
-Edit
-{
-  "_id": "some_user_id",
-  "name": "John Doe",
-  "email": "john@example.com",
-  "token": "generated_jwt_token"
-}
-2. Login User
-Endpoint: POST /api/auth/login
+-> `{"_id": "some_user_id","name": "John Doe","email": "john@example.com","token": "generated_jwt_token"}`
 
-URL: http://localhost:5000/api/auth/login
-Method: POST
-Headers:
-Content-Type: application/json
-Body: (JSON)
-json
-Copy
-Edit
-{
-  "email": "john@example.com",
-  "password": "password123"
-}
+## Login User / Organizer
+Endpoint:
+POST /api/auth/login
+URL:-
+->`http://localhost:5000/api/auth/login`
+method: POST
+Headers:-
+Body (JSON):-
+-> `{"email": "john@example.com","password": "password123"}`
 Expected Response:
 Status: 200 OK
-Response Body:
-json
-Copy
-Edit
-{
-  "_id": "some_user_id",
-  "name": "John Doe",
-  "email": "john@example.com",
-  "token": "generated_jwt_token"
-}
-Error Response (Invalid Credentials):
-json
-Copy
-Edit
-{
-  "message": "Invalid email or password"
-}
-3. Get User Profile
-Endpoint: GET /api/auth/profile
+-> `{"_id": "some_user_id","name": "John Doe","email": "john@example.com","token": "generated_jwt_token"}`
+Error (Invalid Credentials):
+-> {"message": "Invalid email or password"}
 
-URL: http://localhost:5000/api/auth/profile
-Method: GET
+## Get User Profile
+Endpoint:
+GET /api/auth/profile
+
+URL:
+->`http://localhost:5000/api/auth/profile`
+Method:
+GET
+
 Headers:
 Content-Type: application/json
-Authorization: Bearer <token> (Replace <token> with the JWT received from the login response)
+Authorization: Bearer <token>
+(Replace <token> with the JWT received from login)
+
 Expected Response:
 Status: 200 OK
-Response Body:
-json
-Copy
-Edit
-{
-  "_id": "some_user_id",
-  "name": "John Doe",
-  "email": "john@example.com"
-}
-Error Response (No Token):
-json
-Copy
-Edit
-{
-  "message": "Not authorized, no token"
-}
-Error Response (Token Failed):
-json
-Copy
-Edit
-{
-  "message": "Not authorized, token failed"
-}
-Steps to Test Organizer Registration, Login, and Event Creation:
-Register an Organizer:
+->`{"_id": "some_user_id","name": "John Doe","email": "john@example.com"}`
+ ## 2. Event Management
+(Note: Only Organizers can create, update, or delete events.)
 
-POST to /api/auth/register with the following body:
-json
-Copy
-Edit
-{
-  "name": "Event Organizer",
-  "email": "organizer@example.com",
-  "password": "password123"
-}
-Response: You should get a response like:
+Create Event
+Endpoint:
+POST /api/events
 
-json
-Copy
-Edit
-{
-  "_id": "user_id",
-  "name": "Event Organizer",
-  "email": "organizer@example.com",
-  "token": "jwt_token"
-}
-Login as Organizer:
-
-POST to /api/auth/login with the following body:
-json
-Copy
-Edit
-{
-  "email": "organizer@example.com",
-  "password": "password123"
-}
-Response: You should get a response like:
-
-json
-Copy
-Edit
-{
-  "_id": "user_id",
-  "name": "Event Organizer",
-  "email": "organizer@example.com",
-  "token": "jwt_token"
-}
-Create an Event (Only for Organizers):
-
-POST to /api/events with the following body:
-json
-Copy
-Edit
-{
+URL:-
+-> `http://localhost:5000/api/events`
+Method:
+POST
+Headers:-
+~{
   "title": "Concert",
   "description": "A live concert event",
   "date": "2025-05-30",
@@ -161,35 +108,27 @@ Edit
       "quantity": 200
     }
   ]
-}
-Headers:
+}~
+Update Event
+(Assume a similar endpoint exists for updating events, e.g., PUT /api/events/:eventId)
 
-Authorization: Bearer <jwt_token> (Use the token you received from the login step)
-Response: You should get a response like:
+Endpoint:
+PUT /api/events/:eventId
 
-json
-Copy
-Edit
-{
-  "_id": "event_id",
-  "title": "Concert",
-  "description": "A live concert event",
-  "date": "2025-05-30T00:00:00.000Z",
-  "time": "18:00",
-  "venue": "City Hall",
-  "ticketTypes": [
-    {
-      "type": "VIP",
-      "price": 50,
-      "quantity": 100
-    },
-    {
-      "type": "General",
-      "price": 30,
-      "quantity": 200
-    }
-  ],
-  "organizer": "user_id",
-  "createdAt": "2025-02-06T00:00:00.000Z",
-  "updatedAt": "2025-02-06T00:00:00.000Z"
-}
+URL:- `http://localhost:5000/api/events/<event_id>`
+~{
+  "title": "Updated Concert Title",
+  "description": "Updated description",
+  "date": "2025-06-01",
+  "time": "19:00",
+  "venue": "Updated Venue"
+}~
+
+
+Delete Event
+Endpoint:
+DELETE /api/events/:eventId
+
+URL:-
+->`http://localhost:5000/api/events/<event_id>`
+
