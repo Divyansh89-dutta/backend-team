@@ -90,7 +90,7 @@ URL:-
 Method:
 POST
 Headers:-
-~{
+`{
   "title": "Concert",
   "description": "A live concert event",
   "date": "2025-05-30",
@@ -108,7 +108,7 @@ Headers:-
       "quantity": 200
     }
   ]
-}~
+}`
 Update Event
 (Assume a similar endpoint exists for updating events, e.g., PUT /api/events/:eventId)
 
@@ -116,13 +116,13 @@ Endpoint:
 PUT /api/events/:eventId
 
 URL:- `http://localhost:5000/api/events/<event_id>`
-~{
+`{
   "title": "Updated Concert Title",
   "description": "Updated description",
   "date": "2025-06-01",
   "time": "19:00",
   "venue": "Updated Venue"
-}~
+}`
 
 
 Delete Event
@@ -131,4 +131,70 @@ DELETE /api/events/:eventId
 
 URL:-
 ->`http://localhost:5000/api/events/<event_id>`
+Expected Response:-
+`{
+  "message": "Event deleted successfully"
+}`
 
+## Ticket Management
+Create Ticket for an Event
+Endpoint:
+POST /api/tickets/:eventId/tickets
+
+URL:
+->`http://localhost:5000/api/tickets/<event_id>/tickets`
+Method:
+POST
+
+Headers:-
+`{
+  "name": "VIP Ticket",
+  "price": 150,
+  "quantity": 50
+}`
+Expected Response:
+Status: 201 Created
+Update Ticket
+Endpoint:
+PUT /api/tickets/tickets/:ticketId
+
+URL:-
+`http://localhost:5000/api/tickets/tickets/<ticket_id>`
+Body (JSON):-
+`{
+  "name": "Updated VIP Ticket",
+  "price": 200,
+  "quantity": 40
+}`
+Expected Response:
+Returns the updated ticket object.
+
+Delete Ticket
+Endpoint:
+DELETE /api/tickets/tickets/:ticketId
+
+URL:
+`http://localhost:5000/api/tickets/tickets/<ticket_id>`
+
+Get a Single Ticket
+Endpoint:
+GET /api/tickets/tickets/:ticketId
+
+URL:
+`http://localhost:5000/api/tickets/tickets/<ticket_id>`
+
+## Ticket Purchase & Notification (Nodemailer)
+After a user buys a ticket, the server updates the ticket sold count and sends a purchase confirmation email to the email provided by the user.
+
+Endpoint:
+POST /api/tickets/purchase
+
+URL:
+`http://localhost:5000/api/tickets/purchase`
+
+`{
+  "ticketId": "ticket_id_here",
+  "userEmail": "john@example.com",
+  "quantity": 1
+}`
+Note: When this endpoint is hit, Nodemailer sends an email notification to the provided userEmail using the settings defined in utils/notification.js.
