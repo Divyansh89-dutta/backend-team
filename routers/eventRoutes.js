@@ -3,8 +3,6 @@ const router = express.Router();
 const { upload } = require("../utils/upload"); 
 const { protect, isAdmin } = require("../middleware/authMiddleware");
 const { createEvent, getEvents, getEventById, updateEvent, deleteEvent } = require("../controllers/eventController");
-
-
 router.post("/", protect, isAdmin , upload.single("image"), createEvent);
 router.get("/", getEvents);
 router.get("/:id",protect,isAdmin, getEventById);
