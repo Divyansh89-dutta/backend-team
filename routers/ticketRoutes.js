@@ -167,7 +167,7 @@ router.delete("/tickets/:ticketId", async (req, res) => {
     if (!ticketId.match(/^[0-9a-fA-F]{24}$/)) {
       return res.status(400).json({ message: "Invalid Ticket ID" });
     }
-
+      
     const deletedTicket = await Ticket.findByIdAndDelete(ticketId);
     if (!deletedTicket) {
       return res.status(404).json({ message: "Ticket not found" });

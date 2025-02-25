@@ -198,3 +198,4 @@ URL:
   "quantity": 1
 }`
 Note: When this endpoint is hit, Nodemailer sends an email notification to the provided userEmail using the settings defined in utils/notification.js.
+which will we sans to the userEmail Email in real time 
