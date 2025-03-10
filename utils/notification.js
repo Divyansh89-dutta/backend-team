@@ -12,7 +12,6 @@ const sendPurchaseNotification = async (toEmail, ticketDetails) => {
     to: toEmail,
     subject: "Ticket Purchase Confirmation",
     text: `Thank you for your purchase!
-
 Ticket Details:
 - Event: ${ticketDetails.event}
 - Ticket: ${ticketDetails.name}
